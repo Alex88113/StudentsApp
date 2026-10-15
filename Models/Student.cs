@@ -2,8 +2,8 @@ using SQLite;
 
 namespace StudentsApp.Models;
 
-[Table("Student")]
-public class Student
+[Table("Students")]
+public class Students
 {
     [PrimaryKey, AutoIncrement, Column("id")]
     public int Id { get; set; }
