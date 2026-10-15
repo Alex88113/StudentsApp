@@ -1,0 +1,41 @@
+using StudentsApp.Models;
+using SQLite;
+
+namespace StudentsApp.Repositories;
+
+public class GroupRepository
+{
+    private readonly SQLiteAsyncConnection _connection;
+
+    public GroupRepository(string databasePath)
+    {
+        _connection = new SQLiteAsyncConnection(databasePath);
+    }
+
+    public async Task<Groups> AddGroupAsync(Groups group)
+    {
+        await _connection.InsertAsync(group);
+        return group;
+    }
+
+    public async Task<List<Groups>> GetAllGroupsAsync()
+    {
+        return await _connection.Table<Groups>().ToListAsync();
+    }
+
+    public async Task<Groups?> GetByIdGroupAsync(int groupId)
+    {
+        return await _connection.GetAsync<Groups>(groupId);
+    }
+
+    public async Task<Groups> UpdateGroupAsync(Groups group)
+    {
+        await _connection.UpdateAsync(group);
+        return group;
+    }
+
+    public async Task<int> DeleteGroupAsync(Groups group)
+    {
+        return await _connection.DeleteAsync(group);
+    }
+}
