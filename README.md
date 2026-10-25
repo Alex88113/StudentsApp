@@ -31,16 +31,9 @@
 
 **StudentsApp** — учебное консольное приложение, демонстрирующее полный цикл **CRUD-операций** над двумя связанными сущностями: *студент* и *группа*.
 
-<table>
-<tr>
-<td width="50%" valign="top">
-
 ### 🎯 Цель
 
 Продемонстрировать навыки работы с реляционной БД через асинхронный ORM-провайдер, реализовать слоистую архитектуру и корректную обработку ошибок.
-
-</td>
-<td width="50%" valign="top">
 
 ### 📊 Характеристики
 
@@ -52,10 +45,6 @@
 | БД | SQLite |
 | ORM | sqlite-net-pcl |
 | UI | Терминал |
-
-</td>
-</tr>
-</table>
 
 ---
 
@@ -74,21 +63,26 @@
 
 Приложение разделено на **четыре слоя** с чёткой зоной ответственности.
 
-```mermaid
-flowchart TD
-    A["🖥 Program.cs<br/><i>меню, ввод/вывод</i>"]
-    B["📦 Repositories<br/><i>CRUD, изоляция ORM</i>"]
-    C["⚙️ Services<br/><i>подключение, таблицы</i>"]
-    D["📋 Models<br/><i>структура таблиц</i>"]
-
-    A -->|вызывает| B
-    B -->|используют| C
-    C -->|работает с| D
-
-    style A fill:#512BD4,color:#fff
-    style B fill:#239120,color:#fff
-    style C fill:#003B57,color:#fff
-    style D fill:#6c757d,color:#fff
+```text
+┌──────────────────────────────────────┐
+│  Program.cs                          │
+│  меню, ввод/вывод                    │
+└──────────────────┬───────────────────┘
+                   │ вызывает
+┌──────────────────▼───────────────────┐
+│  Repositories/                       │
+│  CRUD, изоляция ORM                  │
+└──────────────────┬───────────────────┘
+                   │ используют
+┌──────────────────▼───────────────────┐
+│  Services/                           │
+│  подключение, создание таблиц        │
+└──────────────────┬───────────────────┘
+                   │ работает с
+┌──────────────────▼───────────────────┐
+│  Models/                             │
+│  структура таблиц                    │
+└──────────────────────────────────────┘
 🔑 Принципы разделения
 Слой	Отвечает за	Не знает о
 Models	Структуру таблиц	SQL, UI
@@ -101,21 +95,21 @@ Program.cs	Меню	SQL, БД
 text
 StudentsApp/
 │
-├── 📂 Models/
-│   ├── 📄 Group.cs
-│   └── 📄 Student.cs
+├── Models/
+│   ├── Group.cs
+│   └── Student.cs
 │
-├── 📂 Repositories/
-│   ├── 📄 GroupRepository.cs
-│   └── 📄 StudentRepository.cs
+├── Repositories/
+│   ├── GroupRepository.cs
+│   └── StudentRepository.cs
 │
-├── 📂 Services/
-│   └── 📄 DatabaseService.cs
+├── Services/
+│   └── DatabaseService.cs
 │
-├── 📄 Program.cs
-├── 📄 StudentsApp.csproj
-├── 📄 students.db
-└── 📄 README.md
+├── Program.cs
+├── StudentsApp.csproj
+├── students.db
+└── README.md
 <details> <summary><b>📋 Назначение файлов</b></summary>
 Файл	Назначение
 Group.cs	Модель группы
@@ -127,38 +121,20 @@ Program.cs	Меню и обработчики
 students.db	База данных
 </details>
 🗄 Схема базы данных
-<table> <tr> <td width="50%" valign="top">
-📁 Groups
+📁 Таблица Groups
 Поле	Тип	Ключ
-Id	int	🔑 PK
+Id	int	🔑 PK, autoincrement
 Name	string	⚠️ NOT NULL
-</td> <td width="50%" valign="top">
-👤 Students
+👤 Таблица Students
 Поле	Тип	Ключ
-Id	int	🔑 PK
+Id	int	🔑 PK, autoincrement
 FirstName	string	⚠️ NOT NULL
 LastName	string	⚠️ NOT NULL
-GroupId	int	🔗 FK → Groups
-</td> </tr> </table>
+GroupId	int	🔗 FK → Groups.Id
 🔗 Связь
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+text
+Groups (1) ──────────< (N) Students
+   Id  ◄────────────────────  GroupId
 Тип: «один-ко-многим». Одна группа — много студентов.
 
 ⚙️ Функциональность
@@ -203,21 +179,18 @@ text
 ✅ The table Students is created.
 ✅ The table Groups is created.
 🔮 Ограничения и улучшения
-<table> <tr> <td width="50%" valign="top">
 ⚠️ Ограничения
 Ограничение	Влияние
 Нет каскада	«Висящий» GroupId
 Нет GUI	Только консоль
 Нет авторизации	Полный доступ
 Нет тестов	Ручная проверка
-</td> <td width="50%" valign="top">
 🚀 Улучшения
 Улучшение	Что даст
 IRepository<T>	Унификация
 Каскад	Целостность
 xUnit	Автопроверка
 EF Core	Миграции
-</td> </tr> </table>
 📎 Методы sqlite-net-pcl
 Метод	Назначение
 InsertAsync	➕ Вставка
