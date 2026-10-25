@@ -1,201 +1,235 @@
-📘 StudentsApp
-Консольное приложение для учёта студентов и групп на C# (.NET 8) с SQLite.
+<div align="center">
 
-📑 Содержание
-О проекте
+# 📘 StudentsApp
 
-Технологии
+### Консольное приложение для учёта студентов и групп
 
-Архитектура
+![C#](https://img.shields.io/badge/C%23-12-239120?style=for-the-badge&logo=c-sharp&logoColor=white)
+![.NET](https://img.shields.io/badge/.NET-8-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)
 
-Структура
+**Учебный проект · CRUD · Асинхронная работа с БД · Слоистая архитектура**
 
-Схема БД
+</div>
 
-CRUD-операции
+---
 
-Ошибки
+## 📑 Содержание
 
-Запуск
+| Основное | Детали |
+|:---------|:-------|
+| [📖 О проекте](#-о-проекте) | [🗄 Схема базы данных](#-схема-базы-данных) |
+| [🛠 Технологический стек](#-технологический-стек) | [⚙️ Функциональность](#️-функциональность) |
+| [🏗 Архитектура](#-архитектура) | [🛡 Обработка ошибок](#-обработка-ошибок) |
+| [📂 Структура проекта](#-структура-проекта) | [🚀 Запуск](#-запуск) |
+| | [🔮 Ограничения и улучшения](#-ограничения-и-улучшения) |
 
-Ограничения
+---
 
-1. О проекте
-StudentsApp — учебное консольное приложение с CRUD-операциями над студентами и группами.
+## 📖 О проекте
 
-Параметры:
+**StudentsApp** — учебное консольное приложение, демонстрирующее полный цикл **CRUD-операций** над двумя связанными сущностями: *студент* и *группа*.
 
-Тип: консольное (CLI)
+<table>
+<tr>
+<td width="50%" valign="top">
 
-Язык: C# 12
+### 🎯 Цель
 
-Платформа: .NET 8
+Продемонстрировать навыки работы с реляционной БД через асинхронный ORM-провайдер, реализовать слоистую архитектуру и корректную обработку ошибок.
 
-БД: SQLite (students.db)
+</td>
+<td width="50%" valign="top">
 
-ORM: sqlite-net-pcl
+### 📊 Характеристики
 
-UI: текстовое меню
+| Параметр | Значение |
+|----------|----------|
+| Тип | Консольное (CLI) |
+| Язык | C# 12 |
+| Платформа | .NET 8 |
+| БД | SQLite |
+| ORM | sqlite-net-pcl |
+| UI | Терминал |
 
-Цель: показать работу с БД через async ORM, слоистую архитектуру и обработку ошибок.
+</td>
+</tr>
+</table>
 
-2. Технологии
-C# / .NET 8 — язык и платформа, async из коробки
+---
 
-SQLite — встраиваемая СУБД, без сервера
+## 🛠 Технологический стек
 
-sqlite-net-pcl — лёгкий async ORM
+| Технология | Роль | Обоснование |
+|:-----------|:-----|:------------|
+| **C# / .NET 8** | Язык и платформа | Асинхронность из коробки |
+| **SQLite** | Встраиваемая СУБД | Без сервера, один файл |
+| **sqlite-net-pcl** | ORM-провайдер | Лёгкий async API |
+| **async/await** | Асинхронность | Не блокирует поток |
 
-async/await — не блокирует поток
+---
 
-3. Архитектура
-Четыре слоя:
+## 🏗 Архитектура
 
-Program.cs — меню, ввод/вывод
+Приложение разделено на **четыре слоя** с чёткой зоной ответственности.
 
-Repositories/ — CRUD, изоляция ORM
+```mermaid
+flowchart TD
+    A["🖥 Program.cs<br/><i>меню, ввод/вывод</i>"]
+    B["📦 Repositories<br/><i>CRUD, изоляция ORM</i>"]
+    C["⚙️ Services<br/><i>подключение, таблицы</i>"]
+    D["📋 Models<br/><i>структура таблиц</i>"]
 
-Services/ — подключение, создание таблиц
+    A -->|вызывает| B
+    B -->|используют| C
+    C -->|работает с| D
 
-Models/ — структура таблиц
+    style A fill:#512BD4,color:#fff
+    style B fill:#239120,color:#fff
+    style C fill:#003B57,color:#fff
+    style D fill:#6c757d,color:#fff
+🔑 Принципы разделения
+Слой	Отвечает за	Не знает о
+Models	Структуру таблиц	SQL, UI
+Repositories	CRUD	Меню, вводе
+Services	Подключение	Бизнес-логике
+Program.cs	Меню	SQL, БД
+💡 Program.cs не обращается к SQLiteAsyncConnection напрямую — только через репозитории.
 
-Принципы:
-
-Models — структура таблиц, не знает про SQL и UI
-
-Repositories — CRUD, не знает про меню
-
-Services — подключение, не знает про бизнес-логику
-
-Program.cs — меню, не знает про SQL
-
-Program.cs не обращается к SQLiteAsyncConnection напрямую — только через репозитории.
-
-4. Структура
+📂 Структура проекта
 text
 StudentsApp/
-  Models/
-    Group.cs
-    Student.cs
-  Repositories/
-    GroupRepository.cs
-    StudentRepository.cs
-  Services/
-    DatabaseService.cs
-  Program.cs
-  StudentsApp.csproj
-  students.db
-  README.md
-Назначение:
+│
+├── 📂 Models/
+│   ├── 📄 Group.cs
+│   └── 📄 Student.cs
+│
+├── 📂 Repositories/
+│   ├── 📄 GroupRepository.cs
+│   └── 📄 StudentRepository.cs
+│
+├── 📂 Services/
+│   └── 📄 DatabaseService.cs
+│
+├── 📄 Program.cs
+├── 📄 StudentsApp.csproj
+├── 📄 students.db
+└── 📄 README.md
+<details> <summary><b>📋 Назначение файлов</b></summary>
+Файл	Назначение
+Group.cs	Модель группы
+Student.cs	Модель студента
+GroupRepository.cs	CRUD групп
+StudentRepository.cs	CRUD студентов
+DatabaseService.cs	Подключение к БД
+Program.cs	Меню и обработчики
+students.db	База данных
+</details>
+🗄 Схема базы данных
+<table> <tr> <td width="50%" valign="top">
+📁 Groups
+Поле	Тип	Ключ
+Id	int	🔑 PK
+Name	string	⚠️ NOT NULL
+</td> <td width="50%" valign="top">
+👤 Students
+Поле	Тип	Ключ
+Id	int	🔑 PK
+FirstName	string	⚠️ NOT NULL
+LastName	string	⚠️ NOT NULL
+GroupId	int	🔗 FK → Groups
+</td> </tr> </table>
+🔗 Связь
 
-Group.cs — модель группы
 
-Student.cs — модель студента
 
-GroupRepository.cs — CRUD групп
 
-StudentRepository.cs — CRUD студентов
 
-DatabaseService.cs — подключение к БД
 
-Program.cs — меню
 
-students.db — база данных
 
-5. Схема БД
-Таблица Groups:
 
-Id — int, PK, autoincrement
 
-Name — string, NOT NULL
 
-Таблица Students:
 
-Id — int, PK, autoincrement
 
-FirstName — string, NOT NULL
 
-LastName — string, NOT NULL
 
-GroupId — int, FK → Groups.Id
 
-Связь: один-ко-многим (одна группа — много студентов).
 
-6. CRUD-операции
-Студенты:
 
-Показать всех — GetAllStudentsAsync
+Тип: «один-ко-многим». Одна группа — много студентов.
 
-Найти по Id — GetByIdStudentAsync
+⚙️ Функциональность
+👤 Студенты
+#	Действие	Метод
+1	📋 Все	GetAllStudentsAsync()
+2	🔍 По Id	GetByIdStudentAsync(id)
+3	➕ Добавить	AddStudentAsync(s)
+4	✏️ Обновить	UpdateStudentAsync(s)
+5	🗑 Удалить	DeleteStudentAsync(s)
+📁 Группы
+#	Действие	Метод
+6	📋 Все	GetAllGroupsAsync()
+7	🔍 По Id	GetByIdGroupAsync(id)
+8	➕ Добавить	AddGroupAsync(g)
+9	✏️ Обновить	UpdateGroupAsync(g)
+10	🗑 Удалить	DeleteGroupAsync(g)
+🛡 Обработка ошибок
+Ситуация	Механизм	Реакция
+⌨️ Текст вместо Id	int.TryParse	«Введите число»
+🔍 Нет записи	FindAsync → null	«Не найден»
+📝 Пустое поле	IsNullOrWhiteSpace	«Поле пустое»
+🔗 Нет группы	GetByIdGroupAsync → null	«Группы нет»
+🗑 Удаление	y/n	«Отменено»
+✅ Приложение не падает при некорректном вводе.
 
-Добавить — AddStudentAsync
+🚀 Запуск
+✅ Требования
+☑ .NET 8 SDK
 
-Обновить — UpdateStudentAsync
+☑ Windows / Linux / macOS
 
-Удалить — DeleteStudentAsync
-
-Группы:
-
-Показать всех — GetAllGroupsAsync
-
-Найти по Id — GetByIdGroupAsync
-
-Добавить — AddGroupAsync
-
-Обновить — UpdateGroupAsync
-
-Удалить — DeleteGroupAsync
-
-7. Ошибки
-Текст вместо Id — int.TryParse — «Введите число»
-
-Нет записи — FindAsync → null — «Не найден»
-
-Пустое поле — IsNullOrWhiteSpace — «Поле пустое»
-
-Нет группы — GetByIdGroupAsync → null — «Группы нет»
-
-Удаление — подтверждение y/n — «Отменено»
-
-Приложение не падает при некорректном вводе.
-
-8. Запуск
-Требования: .NET 8 SDK.
-
-text
+💻 Команды
+bash
 dotnet restore
 dotnet build
 dotnet run
-При первом запуске создаются students.db и таблицы Students, Groups.
+🎉 Первый запуск
+Создаются students.db и таблицы Students, Groups.
 
-9. Ограничения
-Нет каскадного удаления — «висящий» GroupId
-
-Нет GUI — только консоль
-
-Нет авторизации — полный доступ
-
-Нет тестов — ручная проверка
-
-Улучшения:
-
-IRepository<T> — унификация
-
-Каскадное удаление — целостность
-
-xUnit — автопроверка
-
-EF Core — миграции
-
+text
+✅ The table Students is created.
+✅ The table Groups is created.
+🔮 Ограничения и улучшения
+<table> <tr> <td width="50%" valign="top">
+⚠️ Ограничения
+Ограничение	Влияние
+Нет каскада	«Висящий» GroupId
+Нет GUI	Только консоль
+Нет авторизации	Полный доступ
+Нет тестов	Ручная проверка
+</td> <td width="50%" valign="top">
+🚀 Улучшения
+Улучшение	Что даст
+IRepository<T>	Унификация
+Каскад	Целостность
+xUnit	Автопроверка
+EF Core	Миграции
+</td> </tr> </table>
 📎 Методы sqlite-net-pcl
-InsertAsync — вставка
+Метод	Назначение
+InsertAsync	➕ Вставка
+Table<T>().ToListAsync()	📋 Все записи
+FindAsync<T>(pk)	🔍 Поиск по PK
+UpdateAsync	✏️ Обновление
+DeleteAsync	🗑 Удаление
+CreateTableAsync<T>()	🏗 Создание таблицы
+<div align="center">
+📘 StudentsApp
+Учебный проект по курсу «Технология доступа к базам данных ADO.NET»
 
-Table<T>().ToListAsync — все записи
+Сделано с ❤️ на C# / .NET 8 / SQLite
 
-FindAsync — поиск по PK
-
-UpdateAsync — обновление
-
-DeleteAsync — удаление
-
-CreateTableAsync — создание таблицы
+</div> ```
