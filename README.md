@@ -40,36 +40,19 @@ C# / .NET 8	Язык и платформа	Асинхронность из ко�
 SQLite	Встраиваемая СУБД	Не требует сервера, идеальна для учебного проекта
 sqlite-net-pcl	ORM-провайдер	Лёгкий, асинхронный API (SQLiteAsyncConnection)
 async/await	Асинхронные операции	Не блокирует поток во время I/O
-
-## 3. Архитектура
+3. Архитектура
 Приложение разделено на четыре слоя с чёткой зоной ответственности.
 
-```mermaid
-flowchart TD
-    A["Program.cs<br/>точка входа, меню, ввод/вывод"]
-    B["Repositories/<br/>GroupRepository · StudentRepository<br/>CRUD-операции"]
-    C["Services/<br/>Database<br/>подключение, создание таблиц"]
-    D["Models/<br/>Groups · Students<br/>структура таблиц"]
+Принципы разделения
+Слой	Отвечает за	Не знает о
+Models	Структуру таблиц, атрибуты [PrimaryKey]	SQL, подключении, UI
+Repositories	CRUD, трансляцию вызовов в SQLite	Меню, вводе пользователя
+Services	Подключение, создание таблиц	Бизнес-логике
+Program.cs	Меню, ввод/вывод	SQL, соединении с БД
+Ключевая идея: Program.cs никогда не обращается к SQLiteAsyncConnection напрямую — только через репозитории. Это позволяет заменить SQLite на PostgreSQL, не меняя точку входа.
 
-    A -->|вызывает| B
-    B -->|используют| C
-    C -->|работает с| D
-```
-
-### Принципы разделения
-
-| Слой | Отвечает за | Не знает о |
-|------|-------------|-----------|
-| **Models** | Структуру таблиц, атрибуты `[PrimaryKey]` | SQL, подключении, UI |
-| **Repositories** | CRUD, трансляцию вызовов в SQLite | Меню, вводе пользователя |
-| **Services** | Подключение, создание таблиц | Бизнес-логике |
-| **Program.cs** | Меню, ввод/вывод | SQL, соединении с БД |
-
-> **Ключевая идея:** `Program.cs` никогда не обращается к `SQLiteAsyncConnection` напрямую — только через репозитории. Это позволяет заменить SQLite на PostgreSQL, не меняя точку входа.
-
-## 4. Структура проекта
-
-```text
+4. Структура проекта
+text
 StudentsApp/
 ├── Models/
 │   ├── Group.cs
@@ -83,20 +66,16 @@ StudentsApp/
 ├── StudentsApp.csproj
 ├── students.db
 └── README.md
-```
-
-| Папка / файл | Назначение |
-|--------------|-----------|
-| `Models/Group.cs` | Модель группы → таблица `Groups` |
-| `Models/Student.cs` | Модель студента → таблица `Students` |
-| `Repositories/GroupRepository.cs` | CRUD для групп |
-| `Repositories/StudentRepository.cs` | CRUD для студентов |
-| `Services/DatabaseService.cs` | Подключение к SQLite, создание таблиц |
-| `Program.cs` | Точка входа: меню и обработчики |
-| `StudentsApp.csproj` | Файл проекта |
-| `students.db` | База данных (создаётся при запуске) |
-| `README.md` | Документация |
-
+Папка / файл	Назначение
+Models/Group.cs	Модель группы → таблица Groups
+Models/Student.cs	Модель студента → таблица Students
+Repositories/GroupRepository.cs	CRUD для групп
+Repositories/StudentRepository.cs	CRUD для студентов
+Services/DatabaseService.cs	Подключение к SQLite, создание таблиц
+Program.cs	Точка входа: меню и обработчики
+StudentsApp.csproj	Файл проекта
+students.db	База данных (создаётся при запуске)
+README.md	Документация
 5. Схема базы данных
 Таблица Groups
 Поле	Тип	Ограничения	Описание
@@ -108,11 +87,9 @@ Id	int	PK, autoincrement	Уникальный идентификатор
 FirstName	string	NOT NULL	Имя студента
 LastName	string	NOT NULL	Фамилия студента
 GroupId	int	FK → Groups.Id	Группа студента
-Связь
-text
-Groups (1) ──────< (N) Students
-   Id  ◄────────────  GroupId
-Тип связи: «один-ко-многим» — одна группа содержит много студентов, каждый студент принадлежит одной группе.
+Связь между таблицами
+
+Тип связи: «один-ко-многим» (one-to-many). Одна группа содержит много студентов, каждый студент принадлежит одной группе.
 
 6. Функциональность
 6.1. Студенты
@@ -158,13 +135,7 @@ dotnet run
 При первом запуске автоматически:
 
 Создаётся файл students.db в папке проекта.
-
 Создаются таблицы Students и Groups.
-
-В консоли появится:
-The table Students is created.
-The table Groups is created.
-9. Сценарий демонстрации
 
 10. Ограничения и улучшения
 Текущие ограничения
@@ -180,7 +151,6 @@ IRepository<T> — общий интерфейс	Унификация репоз
 Юнит-тесты (xUnit)	Автоматическая проверка CRUD
 Переход на EF Core	Миграции, навигационные свойства, Include
 Вывод группы по имени студента	Удобство: вместо GroupId показывать название группы
-
 📎 Приложение: используемые методы sqlite-net-pcl
 Метод	Назначение
 InsertAsync(obj)	Вставка новой записи
