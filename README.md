@@ -7,6 +7,7 @@
 ![C#](https://img.shields.io/badge/C%23-12-239120?style=for-the-badge&logo=c-sharp&logoColor=white)
 ![.NET](https://img.shields.io/badge/.NET-8-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)
 
 **Учебный проект · CRUD · Асинхронная работа с БД · Слоистая архитектура**
@@ -23,6 +24,7 @@
 | [🛠 Технологический стек](#-технологический-стек) | [⚙️ Функциональность](#️-функциональность) |
 | [🏗 Архитектура](#-архитектура) | [🛡 Обработка ошибок](#-обработка-ошибок) |
 | [📂 Структура проекта](#-структура-проекта) | [🚀 Запуск](#-запуск) |
+| [🐳 Docker](#-docker) | [⚙️ CI/CD](#️-cicd) |
 | | [🔮 Ограничения и улучшения](#-ограничения-и-улучшения) |
 
 ---
@@ -45,6 +47,8 @@
 | БД | SQLite |
 | ORM | sqlite-net-pcl |
 | UI | Терминал |
+| Контейнеризация | Docker |
+| CI/CD | GitHub Actions |
 
 ---
 
@@ -56,6 +60,8 @@
 | **SQLite** | Встраиваемая СУБД | Без сервера, один файл |
 | **sqlite-net-pcl** | ORM-провайдер | Лёгкий async API |
 | **async/await** | Асинхронность | Не блокирует поток |
+| **Docker** | Контейнеризация | Воспроизводимость запуска |
+| **GitHub Actions** | CI/CD | Автосборка и пуш образа |
 
 ---
 
@@ -63,7 +69,7 @@
 
 Приложение разделено на **четыре слоя** с чёткой зоной ответственности.
 
-```text
+```
 ┌──────────────────────────────────────┐
 │  Program.cs                          │
 │  меню, ввод/вывод                    │
@@ -92,7 +98,6 @@ Program.cs	Меню	SQL, БД
 💡 Program.cs не обращается к SQLiteAsyncConnection напрямую — только через репозитории.
 
 📂 Структура проекта
-text
 StudentsApp/
 │
 ├── Models/
@@ -106,18 +111,29 @@ StudentsApp/
 ├── Services/
 │   └── DatabaseService.cs
 │
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+│
 ├── Program.cs
 ├── StudentsApp.csproj
+├── Dockerfile
+├── .dockerignore
 ├── students.db
 └── README.md
-📋 Назначение файлов
+<details> <summary><b>📋 Назначение файлов</b></summary>
+Файл	Назначение
 Group.cs	Модель группы
 Student.cs	Модель студента
 GroupRepository.cs	CRUD групп
 StudentRepository.cs	CRUD студентов
 DatabaseService.cs	Подключение к БД
 Program.cs	Меню и обработчики
+Dockerfile	Сборка Docker-образа
+.dockerignore	Исключения для Docker
+ci.yml	CI/CD пайплайн
 students.db	База данных
+</details>
 🗄 Схема базы данных
 📁 Таблица Groups
 Поле	Тип	Ключ
@@ -129,8 +145,8 @@ Id	int	🔑 PK, autoincrement
 FirstName	string	⚠️ NOT NULL
 LastName	string	⚠️ NOT NULL
 GroupId	int	🔗 FK → Groups.Id
-
 🔗 Связь
+text
 Groups (1) ──────────< (N) Students
    Id  ◄────────────────────  GroupId
 Тип: «один-ко-многим». Одна группа — много студентов.
@@ -171,18 +187,82 @@ dotnet restore
 dotnet build
 dotnet run
 🎉 Первый запуск
+
 Создаются students.db и таблицы Students, Groups.
 ✅ The table Students is created.
 ✅ The table Groups is created.
-🔮 Ограничения и улучшения
+🐳 Docker
+Образ доступен на Docker Hub: alex2007go/studentsapp-image
 
+📥 Запуск из Docker Hub
+bash
+docker pull alex2007go/studentsapp-image:main
+docker run -it alex2007go/studentsapp-image:main
+⚠️ Флаг -it обязателен: приложение интерактивное, ждёт ввода пользователя.
+
+🔨 Сборка локально
+bash
+docker build -t studentsapp .
+docker run -it studentsapp
+📄 Dockerfile
+dockerfile
+# ===== Стадия 1: сборка =====
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+COPY *.csproj ./
+RUN dotnet restore
+
+COPY . ./
+RUN dotnet publish -c Release -o /app
+
+# ===== Стадия 2: запуск =====
+FROM mcr.microsoft.com/dotnet/runtime:8.0
+WORKDIR /app
+COPY --from=build /app .
+ENTRYPOINT ["dotnet", "StudentsApp.dll"]
+💡 Особенности
+Что	Почему
+Multi-stage build	Образ 113 МБ вместо 800+ МБ
+runtime вместо sdk	Для запуска не нужен компилятор
+.dockerignore	Контекст сборки ~2 МБ вместо 87 МБ
+-it при запуске	Интерактивное меню
+⚙️ CI/CD
+Пайплайн: GitHub Actions → сборка .NET → сборка Docker-образа → пуш в Docker Hub.
+
+📄 .github/workflows/ci.yml
+🔄 Что делает пайплайн
+Шаг	Действие
+1	Клонирует репозиторий
+2	Ставит .NET 8 SDK
+3	Восстанавливает NuGet-пакеты
+4	Собирает проект в Release
+5	Генерирует теги образа
+6	Логинится в Docker Hub
+7	Собирает и пушит образ
+🔐 Настройка секретов
+В GitHub → Settings → Secrets and variables → Actions:
+
+Тип	Имя	Значение
+Variables	DOCKER_USERNAME	логин Docker Hub
+Secrets	DOCKER_PASSWORD	access token Docker Hub
+
+📊 Статус
+При каждом push в main:
+
+✅ Проект собирается
+
+✅ Образ пушится в Docker Hub
+
+✅ Доступен по тегу main
+
+🔮 Ограничения и улучшения
 ⚠️ Ограничения
 Ограничение	Влияние
 Нет каскада	«Висящий» GroupId
 Нет GUI	Только консоль
 Нет авторизации	Полный доступ
 Нет тестов	Ручная проверка
-
 🚀 Улучшения
 Улучшение	Что даст
 IRepository<T>	Унификация
@@ -190,7 +270,6 @@ IRepository<T>	Унификация
 xUnit	Автопроверка
 EF Core	Миграции
 📎 Методы sqlite-net-pcl
-
 Метод	Назначение
 InsertAsync	➕ Вставка
 Table<T>().ToListAsync()	📋 Все записи
@@ -202,4 +281,6 @@ CreateTableAsync<T>()	🏗 Создание таблицы
 📘 StudentsApp
 Учебный проект по курсу «Технология доступа к базам данных ADO.NET»
 
-Сделано с ❤️ на C# / .NET 8 / SQLite
+Сделано с ❤️ на C# / .NET 8 / SQLite / Docker
+
+</div> ```
