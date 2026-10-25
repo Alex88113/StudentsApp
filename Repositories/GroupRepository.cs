@@ -7,9 +7,9 @@ public class GroupRepository
 {
     private readonly SQLiteAsyncConnection _connection;
 
-    public GroupRepository(string databasePath)
+    public GroupRepository(SQLiteAsyncConnection connection)
     {
-        _connection = new SQLiteAsyncConnection(databasePath);
+        _connection = connection;
     }
 
     public async Task<Groups> AddGroupAsync(Groups group)
@@ -25,7 +25,7 @@ public class GroupRepository
 
     public async Task<Groups?> GetByIdGroupAsync(int groupId)
     {
-        return await _connection.GetAsync<Groups>(groupId);
+        return await _connection.FindAsync<Groups>(groupId);
     }
 
     public async Task<Groups> UpdateGroupAsync(Groups group)
