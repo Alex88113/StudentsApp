@@ -1,4 +1,4 @@
-п»їusing System.Text;
+using System.Text;
 using StudentsApp.Models;
 using StudentsApp.Services;
 using StudentsApp.Repositories;
@@ -16,24 +16,24 @@ var groupRepo = new GroupRepository(connection);
 while (true)
 {
     Console.WriteLine("\n=== StudentsApp ===");
-    Console.WriteLine("--- РЎС‚СѓРґРµРЅС‚С‹ ---");
-    Console.WriteLine("1. РџРѕРєР°Р·Р°С‚СЊ РІСЃРµС… СЃС‚СѓРґРµРЅС‚РѕРІ");
-    Console.WriteLine("2. РќР°Р№С‚Рё СЃС‚СѓРґРµРЅС‚Р° РїРѕ Id");
-    Console.WriteLine("3. Р”РѕР±Р°РІРёС‚СЊ СЃС‚СѓРґРµРЅС‚Р°");
-    Console.WriteLine("4. РћР±РЅРѕРІРёС‚СЊ СЃС‚СѓРґРµРЅС‚Р°");
-    Console.WriteLine("5. РЈРґР°Р»РёС‚СЊ СЃС‚СѓРґРµРЅС‚Р°");
-    Console.WriteLine("--- Р“СЂСѓРїРїС‹ ---");
-    Console.WriteLine("6. РџРѕРєР°Р·Р°С‚СЊ РІСЃРµ РіСЂСѓРїРїС‹");
-    Console.WriteLine("7. РќР°Р№С‚Рё РіСЂСѓРїРїСѓ РїРѕ Id");
-    Console.WriteLine("8. Р”РѕР±Р°РІРёС‚СЊ РіСЂСѓРїРїСѓ");
-    Console.WriteLine("9. РћР±РЅРѕРІРёС‚СЊ РіСЂСѓРїРїСѓ");
-    Console.WriteLine("10. РЈРґР°Р»РёС‚СЊ РіСЂСѓРїРїСѓ");
-    Console.WriteLine("0. Р’С‹С…РѕРґ");
-    Console.Write("Р’С‹Р±РѕСЂ: ");
+    Console.WriteLine("--- Студенты ---");
+    Console.WriteLine("1. Показать всех студентов");
+    Console.WriteLine("2. Найти студента по Id");
+    Console.WriteLine("3. Добавить студента");
+    Console.WriteLine("4. Обновить студента");
+    Console.WriteLine("5. Удалить студента");
+    Console.WriteLine("--- Группы ---");
+    Console.WriteLine("6. Показать все группы");
+    Console.WriteLine("7. Найти группу по Id");
+    Console.WriteLine("8. Добавить группу");
+    Console.WriteLine("9. Обновить группу");
+    Console.WriteLine("10. Удалить группу");
+    Console.WriteLine("0. Выход");
+    Console.Write("Выбор: ");
 
     if (!int.TryParse(Console.ReadLine(), out var choice))
     {
-        Console.WriteLine("Р’РІРµРґРёС‚Рµ С‡РёСЃР»Рѕ.");
+        Console.WriteLine("Введите число.");
         continue;
     }
 
@@ -50,30 +50,28 @@ while (true)
         case 9: await UpdateGroup(); break;
         case 10: await DeleteGroup(); break;
         case 0: return;
-        default: Console.WriteLine("РќРµРІРµСЂРЅС‹Р№ РІС‹Р±РѕСЂ."); break;
+        default: Console.WriteLine("Неверный выбор."); break;
     }
 }
-
-// ================= РЎРўРЈР”Р•РќРўР« =================
 
 async Task ShowStudents()
 {
     var students = await studentRepo.GetAllStudentsAsync();
-    if (students.Count == 0) { Console.WriteLine("РЎС‚СѓРґРµРЅС‚РѕРІ РЅРµС‚."); return; }
+    if (students.Count == 0) { Console.WriteLine("Студентов нет."); return; }
     foreach (var s in students)
         Console.WriteLine($"ID: {s.Id} | {s.FirstName} {s.LastName} | GroupId: {s.GroupId}");
 }
 
 async Task FindStudent()
 {
-    Console.Write("Id СЃС‚СѓРґРµРЅС‚Р°: ");
+    Console.Write("Id студента: ");
     if (!int.TryParse(Console.ReadLine(), out var id))
-    { Console.WriteLine("РќРµРІРµСЂРЅС‹Р№ Id."); return; }
+    { Console.WriteLine("Неверный Id."); return; }
 
     var student = await studentRepo.GetByIdStudentAsync(id);
     if (student == null)
     {
-        Console.WriteLine($"РЎС‚СѓРґРµРЅС‚ СЃ Id={id} РЅРµ РЅР°Р№РґРµРЅ.");
+        Console.WriteLine($"Студент с Id={id} не найден.");
         return;
     }
 
@@ -83,60 +81,60 @@ async Task FindStudent()
 async Task AddStudent()
 {
     var groups = await groupRepo.GetAllGroupsAsync();
-    if (groups.Count == 0) { Console.WriteLine("РЎРЅР°С‡Р°Р»Р° СЃРѕР·РґР°Р№С‚Рµ С…РѕС‚СЏ Р±С‹ РѕРґРЅСѓ РіСЂСѓРїРїСѓ."); return; }
+    if (groups.Count == 0) { Console.WriteLine("Сначала создайте хотя бы одну группу."); return; }
 
-    Console.Write("РРјСЏ: ");
+    Console.Write("Имя: ");
     var first = Console.ReadLine();
-    if (string.IsNullOrWhiteSpace(first)) { Console.WriteLine("РРјСЏ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚С‹Рј."); return; }
+    if (string.IsNullOrWhiteSpace(first)) { Console.WriteLine("Имя не может быть пустым."); return; }
 
-    Console.Write("Р¤Р°РјРёР»РёСЏ: ");
+    Console.Write("Фамилия: ");
     var last = Console.ReadLine();
-    if (string.IsNullOrWhiteSpace(last)) { Console.WriteLine("Р¤Р°РјРёР»РёСЏ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚РѕР№."); return; }
+    if (string.IsNullOrWhiteSpace(last)) { Console.WriteLine("Фамилия не может быть пустой."); return; }
 
     Console.Write("GroupId: ");
     if (!int.TryParse(Console.ReadLine(), out var gid))
-    { Console.WriteLine("РќРµРІРµСЂРЅС‹Р№ GroupId."); return; }
+    { Console.WriteLine("Неверный GroupId."); return; }
 
     var group = await groupRepo.GetByIdGroupAsync(gid);
     if (group == null)
     {
-        Console.WriteLine($"Р“СЂСѓРїРїС‹ СЃ Id={gid} РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚.");
+        Console.WriteLine($"Группы с Id={gid} не существует.");
         return;
     }
 
     await studentRepo.AddStudentAsync(new Students { FirstName = first, LastName = last, GroupId = gid });
-    Console.WriteLine("РЎС‚СѓРґРµРЅС‚ РґРѕР±Р°РІР»РµРЅ.");
+    Console.WriteLine("Студент добавлен.");
 }
 
 async Task UpdateStudent()
 {
-    Console.Write("Id СЃС‚СѓРґРµРЅС‚Р°: ");
+    Console.Write("Id студента: ");
     if (!int.TryParse(Console.ReadLine(), out var id))
-    { Console.WriteLine("РќРµРІРµСЂРЅС‹Р№ Id."); return; }
+    { Console.WriteLine("Неверный Id."); return; }
 
     var student = await studentRepo.GetByIdStudentAsync(id);
     if (student == null)
     {
-        Console.WriteLine($"РЎС‚СѓРґРµРЅС‚ СЃ Id={id} РЅРµ РЅР°Р№РґРµРЅ.");
+        Console.WriteLine($"Студент с Id={id} не найден.");
         return;
     }
 
-    Console.Write($"РќРѕРІРѕРµ РёРјСЏ ({student.FirstName}): ");
+    Console.Write($"Новое имя ({student.FirstName}): ");
     var first = Console.ReadLine();
     if (!string.IsNullOrWhiteSpace(first)) student.FirstName = first;
 
-    Console.Write($"РќРѕРІР°СЏ С„Р°РјРёР»РёСЏ ({student.LastName}): ");
+    Console.Write($"Новая фамилия ({student.LastName}): ");
     var last = Console.ReadLine();
     if (!string.IsNullOrWhiteSpace(last)) student.LastName = last;
 
-    Console.Write($"РќРѕРІС‹Р№ GroupId ({student.GroupId}): ");
+    Console.Write($"Новый GroupId ({student.GroupId}): ");
     var gidInput = Console.ReadLine();
     if (int.TryParse(gidInput, out var gid))
     {
         var group = await groupRepo.GetByIdGroupAsync(gid);
         if (group == null)
         {
-            Console.WriteLine($"Р“СЂСѓРїРїС‹ СЃ Id={gid} РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚. GroupId РЅРµ РёР·РјРµРЅС‘РЅ.");
+            Console.WriteLine($"Группы с Id={gid} не существует. GroupId не изменён.");
         }
         else
         {
@@ -145,49 +143,47 @@ async Task UpdateStudent()
     }
 
     await studentRepo.UpdateStudentAsync(student);
-    Console.WriteLine("РЎС‚СѓРґРµРЅС‚ РѕР±РЅРѕРІР»С‘РЅ.");
+    Console.WriteLine("Студент обновлён.");
 }
 
 async Task DeleteStudent()
 {
-    Console.Write("Id СЃС‚СѓРґРµРЅС‚Р°: ");
+    Console.Write("Id студента: ");
     if (!int.TryParse(Console.ReadLine(), out var id))
-    { Console.WriteLine("РќРµРІРµСЂРЅС‹Р№ Id."); return; }
+    { Console.WriteLine("Неверный Id."); return; }
 
     var student = await studentRepo.GetByIdStudentAsync(id);
     if (student == null)
     {
-        Console.WriteLine($"РЎС‚СѓРґРµРЅС‚ СЃ Id={id} РЅРµ РЅР°Р№РґРµРЅ.");
+        Console.WriteLine($"Студент с Id={id} не найден.");
         return;
     }
 
-    Console.Write($"РЈРґР°Р»РёС‚СЊ {student.FirstName} {student.LastName}? (y/n): ");
-    if (Console.ReadLine()?.ToLower() != "y") { Console.WriteLine("РћС‚РјРµРЅРµРЅРѕ."); return; }
+    Console.Write($"Удалить {student.FirstName} {student.LastName}? (y/n): ");
+    if (Console.ReadLine()?.ToLower() != "y") { Console.WriteLine("Отменено."); return; }
 
     await studentRepo.DeleteStudentAsync(student);
-    Console.WriteLine("РЎС‚СѓРґРµРЅС‚ СѓРґР°Р»С‘РЅ.");
+    Console.WriteLine("Студент удалён.");
 }
-
-// ================= Р“Р РЈРџРџР« =================
 
 async Task ShowGroups()
 {
     var groups = await groupRepo.GetAllGroupsAsync();
-    if (groups.Count == 0) { Console.WriteLine("Р“СЂСѓРїРї РЅРµС‚."); return; }
+    if (groups.Count == 0) { Console.WriteLine("Групп нет."); return; }
     foreach (var g in groups)
         Console.WriteLine($"ID: {g.Id} | {g.Name}");
 }
 
 async Task FindGroup()
 {
-    Console.Write("Id РіСЂСѓРїРїС‹: ");
+    Console.Write("Id группы: ");
     if (!int.TryParse(Console.ReadLine(), out var id))
-    { Console.WriteLine("РќРµРІРµСЂРЅС‹Р№ Id."); return; }
+    { Console.WriteLine("Неверный Id."); return; }
 
     var group = await groupRepo.GetByIdGroupAsync(id);
     if (group == null)
     {
-        Console.WriteLine($"Р“СЂСѓРїРїР° СЃ Id={id} РЅРµ РЅР°Р№РґРµРЅР°.");
+        Console.WriteLine($"Группа с Id={id} не найдена.");
         return;
     }
 
@@ -196,51 +192,51 @@ async Task FindGroup()
 
 async Task AddGroup()
 {
-    Console.Write("РќР°Р·РІР°РЅРёРµ РіСЂСѓРїРїС‹: ");
+    Console.Write("Название группы: ");
     var name = Console.ReadLine();
-    if (string.IsNullOrWhiteSpace(name)) { Console.WriteLine("РќР°Р·РІР°РЅРёРµ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚С‹Рј."); return; }
+    if (string.IsNullOrWhiteSpace(name)) { Console.WriteLine("Название не может быть пустым."); return; }
 
     await groupRepo.AddGroupAsync(new Groups { Name = name });
-    Console.WriteLine("Р“СЂСѓРїРїР° РґРѕР±Р°РІР»РµРЅР°.");
+    Console.WriteLine("Группа добавлена.");
 }
 
 async Task UpdateGroup()
 {
-    Console.Write("Id РіСЂСѓРїРїС‹: ");
+    Console.Write("Id группы: ");
     if (!int.TryParse(Console.ReadLine(), out var id))
-    { Console.WriteLine("РќРµРІРµСЂРЅС‹Р№ Id."); return; }
+    { Console.WriteLine("Неверный Id."); return; }
 
     var group = await groupRepo.GetByIdGroupAsync(id);
     if (group == null)
     {
-        Console.WriteLine($"Р“СЂСѓРїРїР° СЃ Id={id} РЅРµ РЅР°Р№РґРµРЅР°.");
+        Console.WriteLine($"Группа с Id={id} не найдена.");
         return;
     }
 
-    Console.Write($"РќРѕРІРѕРµ РЅР°Р·РІР°РЅРёРµ ({group.Name}): ");
+    Console.Write($"Новое название ({group.Name}): ");
     var name = Console.ReadLine();
     if (!string.IsNullOrWhiteSpace(name)) group.Name = name;
 
     await groupRepo.UpdateGroupAsync(group);
-    Console.WriteLine("Р“СЂСѓРїРїР° РѕР±РЅРѕРІР»РµРЅР°.");
+    Console.WriteLine("Группа обновлена.");
 }
 
 async Task DeleteGroup()
 {
-    Console.Write("Id РіСЂСѓРїРїС‹: ");
+    Console.Write("Id группы: ");
     if (!int.TryParse(Console.ReadLine(), out var id))
-    { Console.WriteLine("РќРµРІРµСЂРЅС‹Р№ Id."); return; }
+    { Console.WriteLine("Неверный Id."); return; }
 
     var group = await groupRepo.GetByIdGroupAsync(id);
     if (group == null)
     {
-        Console.WriteLine($"Р“СЂСѓРїРїР° СЃ Id={id} РЅРµ РЅР°Р№РґРµРЅР°.");
+        Console.WriteLine($"Группа с Id={id} не найдена.");
         return;
     }
 
-    Console.Write($"РЈРґР°Р»РёС‚СЊ РіСЂСѓРїРїСѓ {group.Name}? (y/n): ");
-    if (Console.ReadLine()?.ToLower() != "y") { Console.WriteLine("РћС‚РјРµРЅРµРЅРѕ."); return; }
+    Console.Write($"Удалить группу {group.Name}? (y/n): ");
+    if (Console.ReadLine()?.ToLower() != "y") { Console.WriteLine("Отменено."); return; }
 
     await groupRepo.DeleteGroupAsync(group);
-    Console.WriteLine("Р“СЂСѓРїРїР° СѓРґР°Р»РµРЅР°.");
+    Console.WriteLine("Группа удалена.");
 }
