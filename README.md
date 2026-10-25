@@ -110,8 +110,7 @@ StudentsApp/
 ├── StudentsApp.csproj
 ├── students.db
 └── README.md
-📋 Назначение файлов</b></summary>
-Файл	Назначение
+📋 Назначение файлов
 Group.cs	Модель группы
 Student.cs	Модель студента
 GroupRepository.cs	CRUD групп
@@ -173,17 +172,17 @@ dotnet build
 dotnet run
 🎉 Первый запуск
 Создаются students.db и таблицы Students, Groups.
-
-text
 ✅ The table Students is created.
 ✅ The table Groups is created.
 🔮 Ограничения и улучшения
+
 ⚠️ Ограничения
 Ограничение	Влияние
 Нет каскада	«Висящий» GroupId
 Нет GUI	Только консоль
 Нет авторизации	Полный доступ
 Нет тестов	Ручная проверка
+
 🚀 Улучшения
 Улучшение	Что даст
 IRepository<T>	Унификация
@@ -191,6 +190,7 @@ IRepository<T>	Унификация
 xUnit	Автопроверка
 EF Core	Миграции
 📎 Методы sqlite-net-pcl
+
 Метод	Назначение
 InsertAsync	➕ Вставка
 Table<T>().ToListAsync()	📋 Все записи
