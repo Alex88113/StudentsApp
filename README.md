@@ -1,10 +1,5 @@
 📘 StudentsApp
 Консольное приложение для учёта студентов и групп
-https://img.shields.io/badge/C%23-12-239120?style=for-the-badge&logo=c-sharp&logoColor=white
-https://img.shields.io/badge/.NET-8-512BD4?style=for-the-badge&logo=dotnet&logoColor=white
-https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white
-https://img.shields.io/badge/license-MIT-blue?style=for-the-badge
-
 Учебный проект · CRUD · Асинхронная работа с БД · Слоистая архитектура
 
 </div>
@@ -226,7 +221,6 @@ CreateTableAsync<T>()	🏗 Создание таблицы (идемпотент
 <div align="center">
 📘 StudentsApp
 Учебный проект по курсу «Технология доступа к базам данных ADO.NET»
-
 Сделано с ❤️ на C# / .NET 8 / SQLite
 
 </div>
