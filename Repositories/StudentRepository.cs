@@ -31,7 +31,7 @@ public class StudentRepository
     }
 
     public async Task<Students?> GetByIdStudentAsync(int studentId) {
-        return await _connection.GetAsync<Students>(studentId);
+        return await _connection.FindAsync<Students>(studentId);
     }
 
     public async Task<List<Students>> GetAllStudentsAsync()

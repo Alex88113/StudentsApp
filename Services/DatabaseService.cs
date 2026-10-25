@@ -6,8 +6,8 @@ public class Database
 {
     private SQLiteAsyncConnection? _database;
     private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
-    
-    public async Task <SQLiteAsyncConnection> GetConnectionAsync(string databasePath)
+
+    public async Task<SQLiteAsyncConnection> GetConnectionAsync(string databasePath)
     {
         if (_database is not null)
             return _database;

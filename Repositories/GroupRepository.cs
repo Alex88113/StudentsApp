@@ -25,7 +25,7 @@ public class GroupRepository
 
     public async Task<Groups?> GetByIdGroupAsync(int groupId)
     {
-        return await _connection.GetAsync<Groups>(groupId);
+        return await _connection.FindAsync<Groups>(groupId);
     }
 
     public async Task<Groups> UpdateGroupAsync(Groups group)
