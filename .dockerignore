@@ -1,0 +1,40 @@
+# ===== Git =====
+.git/
+.gitignore
+.github/
+
+# ===== Артефакты сборки .NET =====
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# ===== Базы данных (создаются внутри контейнера) =====
+*.db
+*.db-shm
+*.db-wal
+
+# ===== Docker =====
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# ===== IDE =====
+.vscode/
+.idea/
+
+# ===== Документация =====
+README.md
+docs/
+
+# ===== Логи =====
+*.log
+
+# ===== ОС =====
+.DS_Store
+Thumbs.db
+
+# ===== Тесты (если появятся) =====
+tests/
+*.Tests/
