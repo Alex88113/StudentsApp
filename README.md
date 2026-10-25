@@ -110,7 +110,7 @@ StudentsApp/
 ├── StudentsApp.csproj
 ├── students.db
 └── README.md
-<details> <summary><b>📋 Назначение файлов</b></summary>
+📋 Назначение файлов</b></summary>
 Файл	Назначение
 Group.cs	Модель группы
 Student.cs	Модель студента
@@ -119,7 +119,6 @@ StudentRepository.cs	CRUD студентов
 DatabaseService.cs	Подключение к БД
 Program.cs	Меню и обработчики
 students.db	База данных
-</details>
 🗄 Схема базы данных
 📁 Таблица Groups
 Поле	Тип	Ключ
@@ -131,8 +130,8 @@ Id	int	🔑 PK, autoincrement
 FirstName	string	⚠️ NOT NULL
 LastName	string	⚠️ NOT NULL
 GroupId	int	🔗 FK → Groups.Id
+
 🔗 Связь
-text
 Groups (1) ──────────< (N) Students
    Id  ◄────────────────────  GroupId
 Тип: «один-ко-многим». Одна группа — много студентов.
@@ -204,5 +203,3 @@ CreateTableAsync<T>()	🏗 Создание таблицы
 Учебный проект по курсу «Технология доступа к базам данных ADO.NET»
 
 Сделано с ❤️ на C# / .NET 8 / SQLite
-
-</div> ```
