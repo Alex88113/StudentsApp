@@ -121,7 +121,7 @@ StudentsApp/
 ├── .dockerignore
 ├── students.db
 └── README.md
-<details> <summary><b>📋 Назначение файлов</b></summary>
+
 Файл	Назначение
 Group.cs	Модель группы
 Student.cs	Модель студента
@@ -133,7 +133,7 @@ Dockerfile	Сборка Docker-образа
 .dockerignore	Исключения для Docker
 ci.yml	CI/CD пайплайн
 students.db	База данных
-</details>
+
 🗄 Схема базы данных
 📁 Таблица Groups
 Поле	Тип	Ключ
@@ -146,9 +146,8 @@ FirstName	string	⚠️ NOT NULL
 LastName	string	⚠️ NOT NULL
 GroupId	int	🔗 FK → Groups.Id
 🔗 Связь
-text
 Groups (1) ──────────< (N) Students
-   Id  ◄────────────────────  GroupId
+Id  ◄────────────────────  GroupId
 Тип: «один-ко-многим». Одна группа — много студентов.
 
 ⚙️ Функциональность
